@@ -1,9 +1,82 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
-<head>
-	<title></title>
-</head>
-<body>
+	<meta charset="UTF-8">
+	<title>Exibir Imagem no Canvas</title>
 
+<script>
+
+//Seleciona imagem e redimensiona canvas.
+function selecionarImagem(files){
+    var divImagem = document.getElementById('divImagem');
+    var file = files[0];
+    var img = document.createElement("img");
+    img.file = file;
+    divImagem.appendChild(img)
+			 
+    var reader = new FileReader();
+    reader.onload = (function(aImg) {return function(e) {aImg.src = e.target.result;};})(img);
+    reader.readAsDataURL(file);
+
+    // Redimensiona canvas no tamanho da imagem
+	img.onload = function() {
+	    var canvas = document.getElementById("canvas");
+	    canvas.width = this.width;
+	    canvas.height = this.height;
+	    var ctx = canvas.getContext("2d");
+	    ctx.drawImage(this, 0, 0);
+	    var imgData = ctx.getImageData(0, 0, this.width, this.height);
+
+        // Seta as informações da imagem original
+	    infoCanvas(this.height, this.width, imgData.data.length);
+	}
+}
+
+// Seta os dados da Imagem nos elementos da pagina
+var infoCanvas = function(height, width, bytes) {
+    var spanWidth = document.getElementById("width");
+    var spanHeight = document.getElementById("height");
+    var spanBytes = document.getElementById("bytes");
+
+    spanWidth.textContent = width;
+    spanHeight.textContent = height;
+    spanBytes.textContent = bytes;
+};
+
+function comprimir() {
+    red = imgData.data[0];
+    green = imgData.data[1];
+    blue = imgData.data[2];
+    alpha = imgData.data[3];
+    alert(red + " " + green + " " + blue + " " + alpha);
+}
+
+</script>
+
+<body>
+<form name="myForm">
+<input id="inputImage" type="file" onchange="selecionarImagem(this.files)">
+<div id="divImagem" style="display:none"></div>
+
+<br>
+
+<input type="button" onclick="comprimir()" value="Comprimir">
+
+<br>
+
+<canvas id="canvas" style="border:4px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag.
+</canvas>
+
+	<div id='infoCanvas'>
+		<div>Imagem Original</div>
+		<br>
+		<div>Width: <span id="width" ></span> px</div>
+		<div>Height: <span id="height" ></span> px</div>
+		<div>Bytes: <span id="bytes" ></span> bytes</div>
+	</div>
+
+<br>
+</form>
 </body>
 </html>
+
